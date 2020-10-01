@@ -15,55 +15,32 @@ def orientation(p, q, r):
       
     val = (float(q.y - p.y) * (r.x - q.x)) - (float(q.x - p.x) * (r.y - q.y)) 
     if (val > 0): 
-          
-        # Clockwise orientation 
         return 1
     elif (val < 0): 
-          
-        # Counterclockwise orientation 
         return 2
     else: 
-          
-        # Colinear orientation 
         return 0
-  
-# The main function that returns true if  
-# the line segment 'p1q1' and 'p2q2' intersect. 
+
 def doIntersect(p1,q1,p2,q2): 
       
-    # Find the 4 orientations required for  
-    # the general and special cases 
     o1 = orientation(p1, q1, p2) 
     o2 = orientation(p1, q1, q2) 
     o3 = orientation(p2, q2, p1) 
     o4 = orientation(p2, q2, q1) 
   
-    # General case 
     if ((o1 != o2) and (o3 != o4)): 
         return True
-  
-    # Special Cases 
-  
-    # p1 , q1 and p2 are colinear and p2 lies on segment p1q1 
     if ((o1 == 0) and onSegment(p1, p2, q1)): 
         return True
   
-    # p1 , q1 and q2 are colinear and q2 lies on segment p1q1 
     if ((o2 == 0) and onSegment(p1, q2, q1)): 
         return True
   
-    # p2 , q2 and p1 are colinear and p1 lies on segment p2q2 
     if ((o3 == 0) and onSegment(p2, p1, q2)): 
         return True
-  
-    # p2 , q2 and q1 are colinear and q1 lies on segment p2q2 
     if ((o4 == 0) and onSegment(p2, q1, q2)): 
         return True
-  
-    # If none of the cases 
     return False
-  
-# Driver program to test above functions: 
 
 def distance(x1, y1, x2 , y2):
     return math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2))
@@ -164,26 +141,76 @@ def calculateLength(building_coordinates, sun_coordinates):
         total_length = calForOneBuilding(building_coordinates, sun_coordinates)
     else:
         if distance(sun_x,sun_y, building_coordinates[0][0], building_coordinates[0][1]) > distance(sun_x, sun_y, building_coordinates[4][0], building_coordinates[4][1]):
+            if( distance(building_coordinates[4][0], building_coordinates[4][1], building_coordinates[5][0], building_coordinates[5][1]) < 
+                distance(building_coordinates[0][0], building_coordinates[0][1], building_coordinates[1][0], building_coordinates[1][1]) ):
+
+                new_building1.append(building_coordinates[4])
+                new_building1.append(building_coordinates[5])
+                new_building1.append(building_coordinates[6])
+                new_building1.append(building_coordinates[7])
+                total_length = calForOneBuilding(new_building1, sun_coordinates) #for P
+                
+                tan_angle = (building_coordinates[7][1] - sun_y) / (building_coordinates[7][0] - sun_x) #Slope
+                height_1 = distance(building_coordinates[6][0], building_coordinates[6][1], building_coordinates[7][0], building_coordinates[7][1])
+                dist = distance(building_coordinates[7][0], building_coordinates[7][1], building_coordinates[2][0], building_coordinates[2][1])
+                shadow_height = height_1 - dist * tan_angle
+                
+                total_length += distance(building_coordinates[0][0], building_coordinates[0][1], building_coordinates[2][0], building_coordinates[2][1]) - shadow_height
+                
+                new_building2.append(building_coordinates[0])
+                new_building2.append(building_coordinates[1])
+                new_building2.append(building_coordinates[2])
+                new_building2.append(building_coordinates[3])
+                
+                total_length += calForOneBuilding(new_building2, sun_coordinates)#for A
             
-            new_building1.append(building_coordinates[0])
-            new_building1.append(building_coordinates[1])
-            new_building1.append(building_coordinates[2])
-            new_building1.append(building_coordinates[3])
-            total_length = calForOneBuilding(new_building1, sun_coordinates) #for P
+            elif( distance(building_coordinates[4][0], building_coordinates[4][1], building_coordinates[5][0], building_coordinates[5][1]) > 
+                distance(building_coordinates[0][0], building_coordinates[0][1], building_coordinates[1][0], building_coordinates[1][1]) ):
+
+                new_building2.append(building_coordinates[4])
+                new_building2.append(building_coordinates[5])
+                new_building2.append(building_coordinates[6])
+                new_building2.append(building_coordinates[7])
+
+                total_length = calForOneBuilding(new_building2, sun_coordinates)#for P
+            else:
+
+                new_building1.append(building_coordinates[0])
+                new_building1.append(building_coordinates[1])
+                new_building1.append(building_coordinates[2])
+                new_building1.append(building_coordinates[3])
+                total_length = calForOneBuilding(new_building1, sun_coordinates) #for A
+
+                new_building2.append(building_coordinates[4])
+                new_building2.append(building_coordinates[5])
+                new_building2.append(building_coordinates[6])
+                new_building2.append(building_coordinates[7])
+
+                total_length += calForOneBuilding(new_building2, sun_coordinates) #for P
+
+        elif distance(sun_x,sun_y, building_coordinates[0][0], building_coordinates[0][1]) < distance(sun_x, sun_y, building_coordinates[4][0], building_coordinates[4][1]):
+            if( distance(building_coordinates[4][0], building_coordinates[4][1], building_coordinates[5][0], building_coordinates[5][1]) == 
+                distance(building_coordinates[0][0], building_coordinates[0][1], building_coordinates[1][0], building_coordinates[1][1]) ):
+
+                new_building1.append(building_coordinates[0])
+                new_building1.append(building_coordinates[1])
+                new_building1.append(building_coordinates[2])
+                new_building1.append(building_coordinates[3])
+                total_length = calForOneBuilding(new_building1, sun_coordinates) #for A
+
+                new_building2.append(building_coordinates[4])
+                new_building2.append(building_coordinates[5])
+                new_building2.append(building_coordinates[6])
+                new_building2.append(building_coordinates[7])
+                total_length += calForOneBuilding(new_building2, sun_coordinates) #for P
             
-            tan_angle = (building_coordinates[3][1] - sun_y) / (building_coordinates[3][0] - sun_x) #Slope
-            height_1 = distance(building_coordinates[2][0], building_coordinates[2][1], building_coordinates[3][0], building_coordinates[3][1])
-            dist = distance(building_coordinates[2][0], building_coordinates[2][1], building_coordinates[5][0], building_coordinates[5][1])
-            shadow_height = height_1 - dist * tan_angle
-            
-            total_length += distance(building_coordinates[4][0], building_coordinates[4][1], building_coordinates[5][0], building_coordinates[5][1]) - shadow_height
-            
-            new_building2.append(building_coordinates[4])
-            new_building2.append(building_coordinates[5])
-            new_building2.append(building_coordinates[6])
-            new_building2.append(building_coordinates[7])
-            
-            total_length += calForOneBuilding(new_building2, sun_coordinates)
+            else:
+                new_building2.append(building_coordinates[4])
+                new_building2.append(building_coordinates[5])
+                new_building2.append(building_coordinates[6])
+                new_building2.append(building_coordinates[7])
+                total_length += calForOneBuilding(new_building2, sun_coordinates) #for P
+                
     return total_length
 
 sun_coordinates = [-3.5,1]
